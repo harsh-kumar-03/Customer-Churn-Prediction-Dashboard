@@ -49,9 +49,10 @@ results = pd.DataFrame({
 })
 
 results.to_csv("churn_predictions.csv", index=False)
-print("Predictions saved to churn_predictions.csv (all 7043 customers)")
+print("Predictions saved to churn_predictions.csv (7043 customers)")
 
 #optional
 top_risk = results.sort_values(by='ChurnProbability', ascending=False).head(10)
 print("\nTop 10 High-Risk Customers:\n", top_risk)
+
 
