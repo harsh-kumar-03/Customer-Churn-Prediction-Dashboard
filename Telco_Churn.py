@@ -30,25 +30,27 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = RandomForestClassifier(n_estimators=200, random_state=42)
 model.fit(X_train, y_train)
 
-# Prediction
-y_pred = model.predict(X_test)
-y_prob = model.predict_proba(X_test)[:, 1]  # Churn probability
-
 #evaluation
-print("Classification Report:\n", classification_report(y_test, y_pred))
-print("AUC Score:", roc_auc_score(y_test, y_prob))
+y_pred_test = model.predict(X_test)
+y_prob_test = model.predict_proba(X_test)[:, 1]
 
-#save for powerbi
+print("Classification Report:\n", classification_report(y_test, y_pred_test))
+print("AUC Score:", roc_auc_score(y_test, y_prob_test))
+
+#prediction for all 100%
+y_pred_all = model.predict(X)   # predictions for all 7043
+y_prob_all = model.predict_proba(X)[:, 1]
+
+# Save results for Power BI
 results = pd.DataFrame({
-    "CustomerID": df.loc[y_test.index, "customerID"],
-    "ChurnProbability": y_prob,
-    "PredictedChurn": y_pred
+    "CustomerID": df["customerID"],
+    "ChurnProbability": y_prob_all,
+    "PredictedChurn": y_pred_all
 })
 
 results.to_csv("churn_predictions.csv", index=False)
-print("Predictions saved to churn_predictions.csv")
+print("✅ Predictions saved to churn_predictions.csv (all 7043 customers)")
 
-
-# Optional: Show top 10 high-risk customers
+#optional
 top_risk = results.sort_values(by='ChurnProbability', ascending=False).head(10)
 print("\nTop 10 High-Risk Customers:\n", top_risk)
